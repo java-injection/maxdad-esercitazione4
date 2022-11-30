@@ -1,4 +1,5 @@
 -- procedure
+-- lgbt 
 USE esercitazione4;
 
 -- procedura tester

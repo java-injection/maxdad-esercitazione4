@@ -1,5 +1,7 @@
 -- procedure
 -- lgbt 
+
+-- lessgoooo
 USE esercitazione4;
 
 -- procedura tester

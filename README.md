@@ -50,7 +50,7 @@
 
 
 -- ***************************************************************************************************************************
--- *								FASE 3   RILEVAZIONE AUTOMATICA DI ANOMALIE 1 e 2
+-- *						FASE 3   RILEVAZIONE AUTOMATICA DI ANOMALIE 1 e 2
 -- ***************************************************************************************************************************
 
 -- creare un trigger che automaticamente rilevi le anomalie di tipo 1 e 2 e ne impedisca l'inserimento nella tabella dei valori. 
@@ -58,7 +58,7 @@
 -- a quale sensore si riferisce e la tipologia di anomalia. 
 
 -- ***************************************************************************************************************************
--- *								FASE 4   ANOMALIA 3 e AGGIORNAMENTO TABELLA VALORI SENSORI
+-- *						FASE 4   ANOMALIA 3 e AGGIORNAMENTO TABELLA VALORI SENSORI
 -- ***************************************************************************************************************************
 
 -- col tempo ci si accorge che c'è anche una terza anomalia che riguarda solo il sensore 1, ovvero che arrivino dei valori a distanza
@@ -69,7 +69,7 @@
 -- Alterare quindi la tabella dei valori con una nuova colonna "anomaly3" di tipo booleano inizializzata a false. 
 
 -- ***************************************************************************************************************************
--- *								FASE 5   AUTO-DETECT DELLE ANOMALIE 3
+-- *						FASE 5   AUTO-DETECT DELLE ANOMALIE 3
 -- ***************************************************************************************************************************
 
 -- Modificare il trigger di fase 3 in modo che riconosca anche le anomalie 3
@@ -82,7 +82,7 @@
 
 
 -- ***************************************************************************************************************************
--- *								FASE 6   EMERGENCY CLEAN UP PROCEDURE
+-- *						FASE 6   EMERGENCY CLEAN UP PROCEDURE
 -- ***************************************************************************************************************************
 
 -- creare una procedura che verifichi che nella tabella valori non esista nessuna anomalia di tipo 1 e 2. Se vengono trovate

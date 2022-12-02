@@ -13,6 +13,8 @@ CREATE EVENT sensor_1
 
     DECLARE errno INT;
     DECLARE msg TEXT;
+	DECLARE execution INT;
+    DECLARE _timestamp TIMESTAMP;
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
         BEGIN
             GET DIAGNOSTICS CONDITION 1
@@ -20,9 +22,6 @@ CREATE EVENT sensor_1
                 msg = MESSAGE_TEXT;
             CALL warn(CONCAT('ERRNO=',errno,', error=',msg),'HIGH');
         END;
-
-    DECLARE execution INT;
-    DECLARE _timestamp TIMESTAMP;
     SET _timestamp = NOW();
     SET execution = RAND_INTERVAL(1,3);
     IF
@@ -46,22 +45,7 @@ CREATE EVENT sensor_1
                     INSERT INTO data_sensori
                     VALUES(
                               _timestamp,
-                              CONCAT('{
-                                  "values": {
-                                    "value": [
-                                      {
-                                        "measure": "voltage",
-                                        "unit": "V",
-                                        "value": ',voltage_value1,'
-                                      },
-                                      {
-                                        "measure": "current",
-                                        "unit": "mA",
-                                        "value": ',current_value1,'
-                                      }
-                                    ]
-                                  }
-                                }'),
+                              generate_jsons1(voltage_value1,current_value1),
 
                               1
                           );
@@ -71,22 +55,7 @@ CREATE EVENT sensor_1
             INSERT INTO data_sensori
             VALUES(
                       _timestamp,
-                      CONCAT('{
-                                  "values": {
-                                    "value": [
-                                      {
-                                        "measure": "voltage",
-                                        "unit": "V",
-                                        "value": ',voltage_value,'
-                                      },
-                                      {
-                                        "measure": "current",
-                                        "unit": "mA",
-                                        "value": ',current_value,'
-                                      }
-                                    ]
-                                  }
-                                }'),
+                      generate_jsons1(voltage_value, current_value),
                       1
                   );
         END;
@@ -95,7 +64,7 @@ CREATE EVENT sensor_1
 
 END $$
 DELIMITER ;
-
+select * from data_sensori;
 
 -- event sensor_2
 DROP EVENT IF EXISTS sensor_2;

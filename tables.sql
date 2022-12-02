@@ -2,13 +2,16 @@
 USE esercitazione4;
 
 -- create table sensori
+-- drop foreign kei if exists fk_sensori
+ALTER TABLE data_sensori DROP FOREIGN KEY fk_id_sensor;
+
 DROP TABLE IF EXISTS sensori;
 
 CREATE TABLE IF NOT EXISTS sensori(
-                                      id_sensor INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-                                      nome VARCHAR(20) NOT NULL,
-                                      brand VARCHAR(50) NOT NULL,
-                                      UNIQUE(nome, brand)
+      id_sensor INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+      nome VARCHAR(20) NOT NULL,
+      brand VARCHAR(50) NOT NULL,
+      UNIQUE(nome, brand)
 );
 
 -- create table data_sensori
@@ -18,7 +21,7 @@ CREATE TABLE IF NOT EXISTS data_sensori(
     timestamp DATETIME NOT NULL,
     data JSON NOT NULL,
     id_sensor INT UNSIGNED NOT NULL,
-    FOREIGN KEY (id_sensor) REFERENCES sensori(id_sensor)
+    CONSTRAINT fk_id_sensor FOREIGN KEY (id_sensor) REFERENCES sensori(id_sensor)
 );
 
 -- create table states

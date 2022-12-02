@@ -78,6 +78,7 @@ CREATE EVENT IF NOT EXISTS sensor_2
     DO BEGIN
     DECLARE errno INT;
     DECLARE msg TEXT;
+	DECLARE execution INT;
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
         BEGIN
             GET DIAGNOSTICS CONDITION 1
@@ -85,7 +86,6 @@ CREATE EVENT IF NOT EXISTS sensor_2
                 msg = MESSAGE_TEXT;
             CALL warn(CONCAT('ERRNO=',errno,', error=',msg),'HIGH');
         END;
-    DECLARE execution INT;
     SET execution = RAND_INTERVAL(1,5);
     IF
             execution = 1
@@ -104,4 +104,4 @@ CREATE EVENT IF NOT EXISTS sensor_2
     END IF;
 END $$
 DELIMITER ;
-
+-- asa

@@ -19,11 +19,11 @@ CREATE USER 'account'@'localhost' IDENTIFIED BY 'Massimobrutto' ;
 GRANT EXECUTE
 ON esercitazione4.*
 TO 'account'@'localhost';
-drop function if exists RAND_INTERVAL;
+DROP FUNCTION IF EXISTS RAND_INTERVAL;
 
 delimiter $$
-CREATE DEFINER='account'@'localhost' function RAND_INTERVAL ( 
- minimo int, massimo int
+CREATE DEFINER='account'@'localhost' FUNCTION RAND_INTERVAL (
+ minimo INT, massimo INT
 )
 RETURNS  INT
 NOT DETERMINISTIC

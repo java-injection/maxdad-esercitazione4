@@ -19,10 +19,10 @@ CREATE USER 'account'@'localhost' IDENTIFIED BY 'Massimobrutto' ;
 GRANT EXECUTE
 ON esercitazione4.*
 TO 'account'@'localhost';
-drop function if exists randnum;
+drop function if exists RAND_INTERVAL;
 
 delimiter $$
-CREATE DEFINER='account'@'localhost' function RandNum ( 
+CREATE DEFINER='account'@'localhost' function RAND_INTERVAL ( 
  minimo int, massimo int
 )
 returns  int 

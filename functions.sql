@@ -14,30 +14,32 @@ END &&
 DELIMITER ;
 
 -- random number generator
-drop user if exists 'account'@'localhost';
+DROP USER IF EXISTS 'account'@'localhost';
 CREATE USER 'account'@'localhost' IDENTIFIED BY 'Massimobrutto' ;
 GRANT EXECUTE
 ON esercitazione4.*
 TO 'account'@'localhost';
-drop function if exists randnum;
 
-delimiter $$
-CREATE DEFINER='account'@'localhost' function RandNum ( 
- minimo int, massimo int
+
+DROP FUNCTION IF EXISTS randnum;
+
+DELIMITER $$
+CREATE DEFINER='account'@'localhost' FUNCTION RandNum (
+ minimo INT, massimo INT
 )
-returns  int 
-not deterministic
+RETURNS  INT
+NOT DETERMINISTIC
 
 SQL SECURITY DEFINER 
-begin
-if(minimo is null or massimo is null)
-then 
+BEGIN
+IF(minimo IS NULL OR massimo IS NULL)
+THEN
 	SET @exception = 'PESCE METTIMI DEI NUMERI';
-    signal sqlstate '45000'
+    SIGNAL SQLSTATE '45000'
 	SET MESSAGE_TEXT = @exception,
 	MYSQL_ERRNO= 1062;
 END IF;
-if(minimo = massimo)
+IF(minimo = massimo)
 then 
 	set @mammt =1;
 	SET @exception = 'PESCE sono identici';
@@ -45,13 +47,13 @@ then
 	SET MESSAGE_TEXT = @exception,
 	MYSQL_ERRNO= 22023;
 END IF;
-return FLOOR(minimo + RAND()*(massimo - minimo + 1)) ; 
-end $$
-delimiter ;
+RETURN FLOOR(minimo + RAND()*(massimo - minimo + 1)) ;
+END $$
+DELIMITER ;
 
 -- JSON GENERATOR FOR door_value
 
-drop function if exists generate_jsons2;
+DROP FUNCTION IF EXISTS generate_jsons2;
 DELIMITER $$
 CREATE FUNCTION generate_jsons2(
     door_value BOOLEAN)
@@ -71,7 +73,7 @@ END $$
 DELIMITER ;
 
 -- json generator for current and volt
-drop function if exists generate_jsons1;
+DROP FUNCTION IF EXISTS generate_jsons1;
 DELIMITER $$
 CREATE FUNCTION generate_jsons1(
     voltage_value INT,

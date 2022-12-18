@@ -16,7 +16,7 @@ BEGIN
     THEN
         SET @query = CONCAT('ALTER TABLE ', tableName, ' DROP FOREIGN KEY ', constraintName, ';');
         PREPARE stmt FROM @query;
-        EXECUTE stmt;
+        EXECUTE stmt; 
         DEALLOCATE PREPARE stmt;
     END IF;
 END$$

@@ -21,7 +21,7 @@ ON esercitazione4.*
 TO 'account'@'localhost';
 DROP FUNCTION IF EXISTS RAND_INTERVAL;
 
-delimiter $$
+DELIMITER $$
 CREATE DEFINER='account'@'localhost' FUNCTION RAND_INTERVAL (
  minimo INT, massimo INT
 )

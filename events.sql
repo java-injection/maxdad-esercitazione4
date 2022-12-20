@@ -64,8 +64,6 @@ CREATE EVENT sensor_1
 
 END $$
 DELIMITER ;
-select * from data_sensori;
-
 -- event sensor_2
 DROP EVENT IF EXISTS sensor_2;
 

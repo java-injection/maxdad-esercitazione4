@@ -1,7 +1,7 @@
 -- create table di tutte le tabelle
-USE esercitazione4;
 
 CREATE DATABASE IF NOT EXISTS esercitazione4;
+USE esercitazione4;
 
 DROP PROCEDURE IF EXISTS PROC_DROP_FOREIGN_KEY;
 DELIMITER $$

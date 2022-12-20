@@ -52,7 +52,7 @@ CREATE TABLE IF NOT EXISTS data_sensori(
 DROP TABLE IF EXISTS states;
 
 CREATE TABLE IF NOT EXISTS states(
-    chiave CHAR(20) PRIMARY KEY,
+    _key CHAR(20) PRIMARY KEY,
     _value CHAR(100)
 )ENGINE = MEMORY;
 

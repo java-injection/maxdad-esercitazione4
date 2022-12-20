@@ -63,7 +63,7 @@ BEGIN
                                       {
                                         "measure": "open_closed",
                                         "unit":"open",
-                                        "value": ', @door_value, '
+                                        "value": ', door_value, '
                                       }
                         ]
     }');

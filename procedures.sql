@@ -24,7 +24,7 @@ DELIMITER $$
 CREATE PROCEDURE cleanup()
 BEGIN
     DELETE FROM data_sensori;
-    DELETE FROM states;
+    UPDATE  states SET _value = null WHERE _key = 'S2_LAST_VALUE';
     DELETE FROM warnings;
     DROP EVENT IF EXISTS sensor_1;
     DROP EVENT IF EXISTS sensor_2;

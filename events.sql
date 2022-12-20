@@ -79,6 +79,7 @@ CREATE EVENT IF NOT EXISTS sensor_2
     DECLARE errno INT;
     DECLARE msg TEXT;
 	DECLARE execution INT;
+
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
         BEGIN
             GET DIAGNOSTICS CONDITION 1
@@ -86,22 +87,43 @@ CREATE EVENT IF NOT EXISTS sensor_2
                 msg = MESSAGE_TEXT;
             CALL warn(CONCAT('ERRNO=',errno,', error=',msg),'HIGH');
         END;
-    SET execution = RAND_INTERVAL(1,5);
+    SET execution = RAND_INTERVAL(1,2);
     IF
             execution = 1
     THEN
         BEGIN
+
             -- set @door_value=coalesce(@door_value,randnum(0,1)); --> tentativo di evitare anomalia 3
             -- set @door_value = not @door_value;
-            CALL tester();
+
+            -- verificare se il valore in tabella STATES è null
+            DECLARE door_value INT;
+            SET door_value = (SELECT _value FROM states WHERE _key = 'S2_LAST_VALUE');
+            IF door_value IS NULL
+                THEN
+                    BEGIN
+                        SET door_value = RAND_INTERVAL(0,1);
+
+                    END;
+                ELSE
+                    BEGIN
+                        SET door_value = NOT door_value;
+                    END;
+            END IF;
+            UPDATE  states SET _value = door_value WHERE _key = 'S2_LAST_VALUE';
             INSERT INTO data_sensori
             VALUES(
                       NOW(),
-                      generate_jsons2(@door_value),
+                      generate_jsons2(door_value),
                       2
                   );
         END;
     END IF;
 END $$
 DELIMITER ;
--- asa
+
+
+
+
+
+

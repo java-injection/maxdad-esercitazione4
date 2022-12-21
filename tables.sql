@@ -3,13 +3,8 @@
 CREATE DATABASE IF NOT EXISTS esercitazione4;
 USE esercitazione4;
 
-
-SELECT * FROM states;
-SELECT * FROM data_sensori;
 DELETE FROM data_sensori;
 DELETE FROM warnings;
-
-
 
 
 DROP PROCEDURE IF EXISTS PROC_DROP_FOREIGN_KEY;

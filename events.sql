@@ -7,14 +7,23 @@ DELIMITER $$
 CREATE EVENT sensor_1
     ON SCHEDULE EVERY 1 SECOND
         STARTS now()
-        ENDS now() + INTERVAL 40 SECOND
+        ENDS now() + INTERVAL 4000 SECOND
     ON COMPLETION PRESERVE
     DO BEGIN
-
+    DECLARE anomaly2active BOOL;
+    DECLARE anomaly1active BOOL;
     DECLARE errno INT;
     DECLARE msg TEXT;
-	DECLARE execution INT;
+    DECLARE execution INT;
     DECLARE _timestamp TIMESTAMP;
+    DECLARE execution_anomaly2 int;
+    DECLARE voltage_value INT; -- value
+    DECLARE current_value INT; -- value
+    DECLARE voltage_value1 INT; -- value
+    DECLARE current_value1 INT; -- value
+    DECLARE execution_anomaly1 INT;
+
+
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
         BEGIN
             GET DIAGNOSTICS CONDITION 1
@@ -22,48 +31,54 @@ CREATE EVENT sensor_1
                 msg = MESSAGE_TEXT;
             CALL warn(CONCAT('ERRNO=',errno,', error=',msg),'HIGH');
         END;
+    SET anomaly2active = (SELECT _value FROM states WHERE _key = 'ANOMALY2_ACTIVE');
+    SET anomaly1active = (SELECT _value FROM states WHERE _key = 'ANOMALY1_ACTIVE');
+    SET execution_anomaly2 = RAND_INTERVAL(1,10);
+    SET execution_anomaly1 = RAND_INTERVAL(1, 5);
+    SET voltage_value = RAND_INTERVAL(0, 10);
+    SET current_value = RAND_INTERVAL(4, 20);
+    SET voltage_value1 = RAND_INTERVAL(0, 10);
+    SET current_value1 = RAND_INTERVAL(4, 20);
     SET _timestamp = NOW();
     SET execution = RAND_INTERVAL(1,3);
     IF
             execution = 1
     THEN
         BEGIN
-            DECLARE voltage_value INT; -- value
-            DECLARE current_value INT; -- value
-            DECLARE voltage_value1 INT; -- value
-            DECLARE current_value1 INT; -- value
-            DECLARE execution1 INT;
-            SET execution1 = RAND_INTERVAL(1,5);
-            SET voltage_value = RAND_INTERVAL(0,10);
-            SET current_value = RAND_INTERVAL(4,20);
-            SET voltage_value1 = RAND_INTERVAL(0,10);
-            SET current_value1 = RAND_INTERVAL(4,20);
+
+
+            IF execution_anomaly2 >= 1 AND execution_anomaly2 <= 3  and anomaly2active = TRUE
+            THEN
+                BEGIN
+                    SET voltage_value = NULL;
+                    SET current_value = NULL;
+                    SET voltage_value1 = NULL;
+                    SET current_value1 = NULL;
+                END ;
+            END IF;
+
             IF
-                    execution1 = 1
+                execution_anomaly1 = 1 AND anomaly1active  = TRUE
             THEN
                 BEGIN
                     INSERT INTO data_sensori
-                    VALUES(
-                              _timestamp,
-                              generate_jsons1(voltage_value1,current_value1),
-
-                              1
-                          );
+                    VALUES (_timestamp,
+                            generate_jsons1(voltage_value1, current_value1),
+                            1);
                 END;
             END IF;
 
             INSERT INTO data_sensori
-            VALUES(
-                      _timestamp,
-                      generate_jsons1(voltage_value, current_value),
-                      1
-                  );
+            VALUES (_timestamp,
+            generate_jsons1(voltage_value, current_value),1);
         END;
     END IF;
-
-
 END $$
 DELIMITER ;
+
+
+
+
 -- event sensor_2
 DROP EVENT IF EXISTS sensor_2;
 

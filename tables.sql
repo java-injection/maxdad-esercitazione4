@@ -3,6 +3,15 @@
 CREATE DATABASE IF NOT EXISTS esercitazione4;
 USE esercitazione4;
 
+
+SELECT * FROM states;
+SELECT * FROM data_sensori;
+DELETE FROM data_sensori;
+DELETE FROM warnings;
+
+
+
+
 DROP PROCEDURE IF EXISTS PROC_DROP_FOREIGN_KEY;
 DELIMITER $$
 CREATE PROCEDURE PROC_DROP_FOREIGN_KEY(IN tableName VARCHAR(64), IN constraintName VARCHAR(64))
@@ -17,7 +26,7 @@ BEGIN
     THEN
         SET @query = CONCAT('ALTER TABLE ', tableName, ' DROP FOREIGN KEY ', constraintName, ';');
         PREPARE stmt FROM @query;
-        EXECUTE stmt; 
+        EXECUTE stmt;
         DEALLOCATE PREPARE stmt;
     END IF;
 END$$
@@ -43,8 +52,8 @@ DROP TABLE IF EXISTS data_sensori;
 
 CREATE TABLE IF NOT EXISTS data_sensori(
     timestamp DATETIME NOT NULL,
-    data JSON NOT NULL,
-    id_sensor INT UNSIGNED NOT NULL,
+    data JSON ,
+    id_sensor INT UNSIGNEd ,
     CONSTRAINT fk_id_sensor FOREIGN KEY (id_sensor) REFERENCES sensori(id_sensor)
 );
 

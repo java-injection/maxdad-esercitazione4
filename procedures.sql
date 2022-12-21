@@ -25,6 +25,8 @@ CREATE PROCEDURE cleanup()
 BEGIN
     DELETE FROM data_sensori;
     UPDATE  states SET _value = null WHERE _key = 'S2_LAST_VALUE';
+    UPDATE  states SET _value = false WHERE _key = 'ANOMALY1_ACTIVE';
+    UPDATE  states SET _value = false WHERE _key = 'ANOMALY2_ACTIVE';
     DELETE FROM warnings;
     DROP EVENT IF EXISTS sensor_1;
     DROP EVENT IF EXISTS sensor_2;
@@ -123,4 +125,47 @@ BEGIN
 END $$
 DELIMITER ;
 
+
+
+
+DELIMITER $$
+CREATE PROCEDURE activate_anomaly_1(
+    anomaly BOOLEAN
+)
+ BEGIN
+     DECLARE errno INT;
+     DECLARE msg TEXT;
+     DECLARE EXIT HANDLER FOR SQLEXCEPTION
+         BEGIN
+             GET DIAGNOSTICS CONDITION 1
+                 errno =  MYSQL_ERRNO,
+                 msg = MESSAGE_TEXT;
+             CALL warn(CONCAT('ERRNO=',errno,', error=',msg),'HIGH');
+         END;
+
+     UPDATE states SET _value = anomaly WHERE _key = 'ANOMALY1_ACTIVE';
+
+END $$
+DELIMITER ;
+
+
+DELIMITER $$
+CREATE PROCEDURE activate_anomaly_2(
+    anomaly BOOLEAN
+)
+BEGIN
+    DECLARE errno INT;
+    DECLARE msg TEXT;
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+        BEGIN
+            GET DIAGNOSTICS CONDITION 1
+                errno =  MYSQL_ERRNO,
+                msg = MESSAGE_TEXT;
+            CALL warn(CONCAT('ERRNO=',errno,', error=',msg),'HIGH');
+        END;
+
+    UPDATE states SET _value = anomaly WHERE _key = 'ANOMALY2_ACTIVE';
+
+END $$
+DELIMITER ;
 

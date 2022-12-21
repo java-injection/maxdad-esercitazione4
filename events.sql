@@ -86,13 +86,18 @@ DELIMITER $$
 CREATE EVENT IF NOT EXISTS sensor_2
     ON SCHEDULE EVERY 1 SECOND
         STARTS now()
-        ENDS now() + INTERVAL 40 SECOND
+        ENDS now() + INTERVAL 4000 SECOND
     ON COMPLETION PRESERVE
     DO BEGIN
+    DECLARE _timestamp DATETIME;
+    DECLARE anomaly2active BOOL;
+    DECLARE anomaly1active BOOL;
+    DECLARE door_value INT;
     DECLARE errno INT;
     DECLARE msg TEXT;
 	DECLARE execution INT;
-
+    DECLARE execution_anomaly1 INT;
+    DECLARE execution_anomaly2 INT;
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
         BEGIN
             GET DIAGNOSTICS CONDITION 1
@@ -100,7 +105,14 @@ CREATE EVENT IF NOT EXISTS sensor_2
                 msg = MESSAGE_TEXT;
             CALL warn(CONCAT('ERRNO=',errno,', error=',msg),'HIGH');
         END;
-    SET execution = RAND_INTERVAL(1,2);
+    SET _timestamp = now();
+    SET execution = RAND_INTERVAL(1,3);
+    SET execution_anomaly1 = RAND_INTERVAL(1,10);
+    SET execution_anomaly2 = RAND_INTERVAL(1,10);
+    SET door_value = (SELECT _value FROM states WHERE _key = 'S2_LAST_VALUE');
+    SET anomaly2active = (SELECT _value FROM states WHERE _key = 'ANOMALY2_ACTIVE');
+    SET anomaly1active = (SELECT _value FROM states WHERE _key = 'ANOMALY1_ACTIVE');
+
     IF
             execution = 1
     THEN
@@ -110,8 +122,7 @@ CREATE EVENT IF NOT EXISTS sensor_2
             -- set @door_value = not @door_value;
 
             -- verificare se il valore in tabella STATES è null
-            DECLARE door_value INT;
-            SET door_value = (SELECT _value FROM states WHERE _key = 'S2_LAST_VALUE');
+
             IF door_value IS NULL
                 THEN
                     BEGIN
@@ -124,12 +135,35 @@ CREATE EVENT IF NOT EXISTS sensor_2
                     END;
             END IF;
             UPDATE  states SET _value = door_value WHERE _key = 'S2_LAST_VALUE';
+
+            -- se ANOMALIA 2 = TRUE allora sovraascrivo il valore da inserire a NULL
+            IF anomaly2active = true AND execution_anomaly2 >=1 AND execution_anomaly2 <=3
+            THEN
+                BEGIN
+                    SET door_value = NULL;
+                END;
+            END IF;
+
+
             INSERT INTO data_sensori
             VALUES(
-                      NOW(),
+                      _timestamp,
                       generate_jsons2(door_value),
                       2
                   );
+            -- se ANOMALIA 1 = TRUE allora LO REINSERISCO :>
+
+            IF anomaly1active = true and execution_anomaly1 = 1
+            THEN
+                    BEGIN
+                        INSERT INTO data_sensori
+                        VALUES(
+                                  _timestamp,
+                                  generate_jsons2(door_value),
+                                  2
+                        );
+                    END;
+            END IF;
         END;
     END IF;
 END $$

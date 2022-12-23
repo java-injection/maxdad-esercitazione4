@@ -1,6 +1,8 @@
 -- procedure
 
 USE esercitazione4;
+
+DROP PROCEDURE SHUT_DOWN;
 DELIMITER &&
 CREATE PROCEDURE SHUT_DOWN()
 BEGIN
@@ -8,7 +10,7 @@ BEGIN
     DROP EVENT IF EXISTS SENSOR_2;
     CALL CLEANUP();
     CALL activate_anomaly_1(TRUE);
-    CALL activate_anomaly_1(TRUE);
+    CALL activate_anomaly_2(TRUE);
 END &&
 DELIMITER ;
 

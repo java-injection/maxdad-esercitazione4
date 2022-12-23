@@ -32,7 +32,7 @@ CREATE TRIGGER Anomalia1_Before_Insert
         THEN
                 BEGIN
                     INSERT INTO anomalies VALUES (new.timestamp, new.id_sensor, 'ANOMALY 1');
-                    -- DELETE FROM data_sensori WHERE timestamp = NEW.timestamp AND id_sensor = NEW.id_sensor;
+                    DELETE FROM data_sensori WHERE timestamp = OLD.timestamp AND id_sensor = OLD.id_sensor;
                     SET @exception = CONCAT('SONO STATI TROVATI 2 O PIU VALORI CON LO STESSO TIMESTAMP');
                     SIGNAL SQLSTATE '02000'
                     SET MESSAGE_TEXT = @exception;

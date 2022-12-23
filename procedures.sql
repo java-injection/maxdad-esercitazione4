@@ -1,8 +1,21 @@
 -- procedure
--- lgbt 
 
--- lessgoooo
 USE esercitazione4;
+DELIMITER &&
+CREATE PROCEDURE SHUT_DOWN()
+BEGIN
+    DROP EVENT IF EXISTS SENSOR_1;
+    DROP EVENT IF EXISTS SENSOR_2;
+    CALL CLEANUP();
+    CALL activate_anomaly_1(TRUE);
+    CALL activate_anomaly_1(TRUE);
+END &&
+DELIMITER ;
+
+
+CALL SHUT_DOWN();
+
+
 
 -- procedura tester
 DROP PROCEDURE IF EXISTS tester;
@@ -17,6 +30,11 @@ BEGIN
 END $$
 DELIMITER ;
 
+
+
+
+
+
 -- procedura cleanup
 DROP PROCEDURE IF EXISTS cleanup;
 
@@ -28,6 +46,9 @@ BEGIN
     UPDATE  states SET _value = false WHERE _key = 'ANOMALY1_ACTIVE';
     UPDATE  states SET _value = false WHERE _key = 'ANOMALY2_ACTIVE';
     DELETE FROM warnings;
+    ALTER TABLE anomalies ENGINE = INNODB;
+    DELETE FROM anomalies;
+    ALTER TABLE anomalies ENGINE = ARCHIVE;
     DROP EVENT IF EXISTS sensor_1;
     DROP EVENT IF EXISTS sensor_2;
     SELECT * FROM data_sensori;
@@ -35,6 +56,15 @@ BEGIN
     SELECT * FROM warnings;
 END $$
 DELIMITER ;
+
+
+
+
+
+
+
+
+
 
 -- procedura enable_events
 DROP PROCEDURE IF EXISTS enable_events;
@@ -72,6 +102,17 @@ BEGIN
 END $$
 DELIMITER ;
 
+
+
+
+
+
+
+
+
+
+
+
 -- procedura enable_all_events
 DROP PROCEDURE IF EXISTS enable_all_events;
 
@@ -88,31 +129,16 @@ BEGIN
             CALL warn(CONCAT('ERRNO=',errno,', error=',msg),'HIGH');
         END;
     ALTER EVENT sensor_1 ENABLE;
-    ALTER EVENT sensor_2 DISABLE;
+    ALTER EVENT sensor_2 ENABLE;
 END $$
 DELIMITER ;
 
--- procedure enable_all_events
-DROP PROCEDURE IF EXISTS enable_all_events;
 
-DELIMITER $$
-CREATE PROCEDURE enable_all_events()
-BEGIN
-    DECLARE errno INT;
-    DECLARE msg TEXT;
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-        BEGIN
-            GET DIAGNOSTICS CONDITION 1
-                errno =  MYSQL_ERRNO,
-                msg = MESSAGE_TEXT;
-            CALL warn(CONCAT('ERRNO=',errno,', error=',msg),'HIGH');
-        END;
-    ALTER EVENT sensor_1 ENABLE;
-    ALTER EVENT sensor_2 DISABLE;
-END $$
-DELIMITER ;
 
--- procedura warn
+
+
+
+-- procedura warn§
 DROP PROCEDURE IF EXISTS warn;
 
 DELIMITER $$
@@ -124,6 +150,10 @@ BEGIN
     INSERT INTO warnings VALUES(NOW(),message,level);
 END $$
 DELIMITER ;
+
+
+
+
 
 
 
@@ -147,6 +177,15 @@ CREATE PROCEDURE activate_anomaly_1(
 
 END $$
 DELIMITER ;
+
+
+
+
+
+
+
+
+
 
 
 DELIMITER $$

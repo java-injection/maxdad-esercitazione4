@@ -48,7 +48,7 @@ DROP TABLE IF EXISTS data_sensori;
 CREATE TABLE IF NOT EXISTS data_sensori(
     timestamp DATETIME NOT NULL,
     data JSON ,
-    id_sensor INT UNSIGNEd ,
+    id_sensor INT UNSIGNED ,
     CONSTRAINT fk_id_sensor FOREIGN KEY (id_sensor) REFERENCES sensori(id_sensor)
 );
 
@@ -69,3 +69,13 @@ CREATE TABLE IF NOT EXISTS warnings(
     level ENUM('INFO','MEDIUM','HIGH')
 )ENGINE MEMORY;
 
+
+DROP TABLE IF EXISTS anomalies;
+
+CREATE TABLE IF NOT EXISTS anomalies(
+                                       timestamp DATETIME NOT NULL,
+                                       id_sensor INT UNSIGNED NOT NULL,
+                                       type ENUM('ANOMALY 1','ANOMALY 2')
+)ENGINE ARCHIVE;
+
+-- nelle tabelle engine non ci possono essere FK
